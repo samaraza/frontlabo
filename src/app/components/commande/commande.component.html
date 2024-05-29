@@ -1,0 +1,242 @@
+<div class="grid">
+    <div class="col-12">
+      <div class="card px-6 py-6">
+        <p-toast></p-toast>
+        <p-toolbar styleClass="mb-4">
+          <ng-template pTemplate="left">
+            <div class="my-2">
+              <button
+                pButton
+                pRipple
+                label="New"
+                icon="pi pi-plus"
+                class="p-button-success mr-2"
+                (click)="openNew()"
+              ></button>
+            </div>
+          </ng-template>
+        </p-toolbar>
+        <!--      tableau d'affichage  -->
+        <p-table
+          #dt
+          [value]="allcommandes"
+          [columns]="cols"
+          responsiveLayout="scroll"
+          [rows]="10"
+          [globalFilterFields]="[
+            'name',
+            'country.name',
+            'representative.name',
+            'status'
+          ]"
+          [paginator]="true"
+          [rowsPerPageOptions]="[10, 20, 30]"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+          selectionMode="multiple"
+          [rowHover]="true"
+          dataKey="id"
+        >
+          <ng-template pTemplate="caption">
+            <div
+              class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+            >
+              <h5 class="m-0">Manage Commandes</h5>
+            </div>
+          </ng-template>
+          <!-- les titres du tableau  -->
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="code">Designation</th>
+              <th pSortableColumn="name">numero</th>
+              <th pSortableColumn="name">Date</th>
+              <th>Actions</th>
+            </tr>
+          </ng-template>
+          <!-- les titres du tableau  -->
+          <!-- le contenu du tableau -->
+          <ng-template pTemplate="body" let-product>
+            <tr>
+              <td style="width: 14%; min-width: 10rem">
+                {{ product?.designation }}
+              </td>
+              <td style="width: 14%; min-width: 10rem">
+                {{ product?.numero }}
+              </td>
+              <td style="width: 14%; min-width: 10rem">
+                {{ product?.date | date }}
+              </td>
+              <td>
+                <div class="flex">
+                  <button
+                    pButton
+                    pRipple
+                    icon="pi pi-trash"
+                    class="p-button-rounded p-button-warning"
+                    (click)="deleteProduct(product)"
+                  ></button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <!-- le contenu du tableau -->
+        </p-table>
+      </div>
+      <!-- dialog add labo  -->
+  
+      <p-dialog
+        [(visible)]="productDialog"
+        [style]="{ width: '450px' }"
+        header="Commande  "
+        [modal]="true"
+        class="p-fluid h-6"
+      >
+        <ng-template pTemplate="content">
+          <div class="field">
+            <input
+              pInputText
+              type="text"
+              placeholder="Designation"
+              class="w-full sm:w-auto"
+              [(ngModel)]="commandePayload.designation"
+            />
+          </div>
+          <div class="field">
+            <input
+              pInputText
+              type="text"
+              placeholder="Numero"
+              class="w-full sm:w-auto"
+              [(ngModel)]="commandePayload.numero"
+            />
+          </div>
+          <div class="field">
+            <input
+              pInputText
+              type="text"
+              placeholder="observation"
+              class="w-full sm:w-auto"
+              [(ngModel)]="commandePayload.observation"
+            />
+          </div>
+          <div class="field">
+            <p-calendar placeholder="Jour" [(ngModel)]="commandePayload.date" />
+          </div>
+          <p-table [value]="allProduitCommandes">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Produit</th>
+                <th>quantite</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product>
+              <tr
+                [ngClass]="{
+                  'row-accessories': product.category === 'Accessories'
+                }"
+              >
+                <td>{{ product.nomProduit }}</td>
+                <td>{{ product.quantite }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+          <p-button (click)="showDialog()" label="Ajouter produit" />
+          <p-dialog
+            header="Add Product"
+            [modal]="true"
+            [(visible)]="visible"
+            [style]="{ width: '30rem' }"
+            [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+            [maximizable]="true"
+          >
+            <div class="flex align-items-center gap-3 mb-3">
+              <input
+                pInputText
+                type="text"
+                placeholder="Produit"
+                class="w-full sm:w-auto"
+                [(ngModel)]="productToComande.nomProduit"
+              />
+              <input
+                pInputText
+                type="text"
+                placeholder="Quantite"
+                class="w-full sm:w-auto"
+                [(ngModel)]="productToComande.quantite"
+              />
+            </div>
+  
+            <div class="flex justify-content-end gap-2">
+              <p-button
+                label="Cancel"
+                severity="secondary"
+                (click)="visible = false"
+              />
+              <p-button
+                label="Save"
+                (click)="addProductToCommande(productToComande)"
+              />
+            </div>
+          </p-dialog>
+        </ng-template>
+        <!-- dialog add labo  -->
+  
+        <ng-template pTemplate="footer">
+          <!-- button to cancel adding  -->
+          <button
+            pButton
+            pRipple
+            label="Cancel"
+            icon="pi pi-times"
+            class="p-button-text"
+            (click)="hideDialog()"
+          ></button>
+          <!-- button to save  -->
+          <button
+            pButton
+            pRipple
+            label="Save"
+            icon="pi pi-check"
+            class="p-button-text"
+            (click)="saveProduct()"
+          ></button>
+        </ng-template>
+      </p-dialog>
+  
+      <!-- delete one  product dialog  -->
+      <p-dialog
+        [(visible)]="deleteProductDialog"
+        header="Confirm"
+        [modal]="true"
+        [style]="{ width: '450px' }"
+      >
+        <div class="flex align-items-center justify-content-center">
+          <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+          <span *ngIf="productRes"
+            >Are you like to delete product : <b>{{ productRes.designation }}</b
+            >?</span
+          >
+        </div>
+        <ng-template pTemplate="footer">
+          <button
+            pButton
+            pRipple
+            icon="pi pi-times"
+            class="p-button-text"
+            label="No"
+            (click)="deleteProductDialog = false"
+          ></button>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-check"
+            class="p-button-text"
+            label="Yes"
+            (click)="confirmDelete(productRes.id)"
+          ></button>
+        </ng-template>
+      </p-dialog>
+      <!-- delete one  product dialog  -->
+    </div>
+  </div>
+  

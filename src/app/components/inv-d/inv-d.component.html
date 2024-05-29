@@ -1,0 +1,118 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="card px-6 py-6">
+      <p-toast></p-toast>
+      <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+          <div class="my-2">
+            <h2>
+              ----------------------Inventaire des produits Consommables
+              -------------------------------------------
+            </h2>
+          </div>
+        </ng-template>
+      </p-toolbar>
+      <!--      tableau d'affichage  -->
+      <p-table
+        #dt
+        [value]="filtredPRoducts"
+        [columns]="cols"
+        responsiveLayout="scroll"
+        [rows]="10"
+        [globalFilterFields]="[
+          'name',
+          'country.name',
+          'representative.name',
+          'status'
+        ]"
+        [paginator]="true"
+        [rowsPerPageOptions]="[10, 20, 30]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        selectionMode="multiple"
+        [rowHover]="true"
+        dataKey="id"
+      >
+        <ng-template pTemplate="caption">
+          <div
+            class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+          >
+            <h5 class="m-0">Inventaire des Produits consommables</h5>
+          </div>
+        </ng-template>
+        <!-- les titres du tableau  -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="code">Designation Produit</th>
+            <th pSortableColumn="name">Reference</th>
+            <th pSortableColumn="name">Unite Mesure</th>
+            <th pSortableColumn="name">quantite initiale</th>
+            <th pSortableColumn="name">quantite utlisé</th>
+            <th pSortableColumn="name">quantite Perdu</th>
+            <th pSortableColumn="name">quantite Restante</th>
+          </tr>
+        </ng-template>
+        <!-- les titres du tableau  -->
+        <!-- le contenu du tableau -->
+        <ng-template pTemplate="body" let-product>
+          <tr>
+            <td style="width: 14%; min-width: 10rem">
+              {{ product.designation }}
+            </td>
+            <td style="width: 14%; min-width: 10rem">
+              {{ product.reference }}
+            </td>
+            <td style="width: 14%; min-width: 10rem">
+              {{ product.uniteMesure }}
+            </td>
+            <td style="width: 14%; min-width: 10rem">
+              {{ product.quantiteInitiale }}
+            </td>
+            <td style="width: 14%; min-width: 10rem">
+              {{ product.quantiteUtilise }}
+            </td>
+            <td style="width: 10%; min-width: 10rem">
+              <p-inputNumber
+                [(ngModel)]="product.quanitePerdu"
+                inputId="minmax"
+                mode="decimal"
+                (onInput)="handleChange(product)"
+              />
+            </td>
+            <td style="width: 14%; min-width: 10rem">
+              {{ product.quantiteRestante }}
+            </td>
+
+            <td>
+              <div class="flex">
+                <!-- fonction edit  -->
+
+                <!--      <button
+                  pButton
+                  pRipple
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-success mr-2"
+                  (click)="editProduct(product)"
+                ></button> -->
+                <!-- fontion delete  -->
+                <!--      <button
+                  pButton
+                  pRipple
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-warning"
+                  (click)="deleteProduct(product)"
+                ></button> -->
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <!-- le contenu du tableau -->
+      </p-table>
+    </div>
+    <p-button
+      class="flex justify-content-end flex-wrap"
+      label="Appliquer Inventaire"
+      (click)="appliquerChangements()"
+    />
+  </div>
+</div>

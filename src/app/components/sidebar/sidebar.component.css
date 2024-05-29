@@ -1,0 +1,11 @@
+.showSidebar{
+  transform: translateX(-400px);
+}
+.sidebar{
+  border: 2px solid red;
+}
+.laboLogin {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
